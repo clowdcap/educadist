@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block titulo %} Educadist - Login {% endblock %}
+
+{% block conteudo %}
+    <h1> Login </h1>
+    <div class="module">
+        {% if form.errors %}
+            <p>O usuário e/ou senha não conferem. Tente novamente.</p>
+        {% else %}
+            <p>Por favor informe seu usuário e senha.</p>
+        {% endif %}
+        <div class="login-form">
+            <form action="{% url 'login' %}" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <p><input type="submit" value="Login"></p>
+            </form>
+        </div>
+    </div>
+{% endblock %}

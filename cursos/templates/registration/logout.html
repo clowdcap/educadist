@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block titulo %} Logout {% endblock %}
+
+{% block conteudo %}
+    <h1>Logout</h1>
+    <div class="module">
+        <p>Você saiu do sistema Educadist.
+        Você pode <a href="{% url 'login' %}">entrar novamente</a>.</p>
+    </div>
+{% endblock %}

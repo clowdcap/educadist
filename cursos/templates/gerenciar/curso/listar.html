@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block titulo %}Meus cursos{% endblock %}
+
+{% block conteudo %}
+    <h1>Meus Cursos</h1>
+    <div class="module">
+    {% for c in object_list %}
+        <div class="course-info">
+            <h3>{{ c.titulo }}</h3>
+            <p>
+                <a href="{% url 'editar_curso' c.id %}">Editar</a>
+                <a href="{% url 'excluir_curso' c.id %}">Excluir</a>
+                <a href="{% url 'modulo_curso_update' c.id %}">Editar Módulos</a>
+            </p>
+        </div>
+    {% empty %}
+        <h3>Você não possui nenhum curso cadastrado.</h3>
+    {% endfor %}
+        <p>
+            <a href="{% url 'criar_curso' %}" class="button">Novo...</a>
+        </p>
+    </div>
+{% endblock %}
