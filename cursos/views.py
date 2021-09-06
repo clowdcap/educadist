@@ -111,7 +111,6 @@ class CriarAtualizarConteudoView(TemplateResponseMixin, View):
                                          dono=request.user)
         return super().dispatch(request, modulo_id, model_name, id)
 
-
     def get(self, request, modulo_id, model_name, id=None):
         form = self.get_form(self.model, instance= self.obj)
         return self.render_to_response({'form': form,
@@ -132,3 +131,15 @@ class CriarAtualizarConteudoView(TemplateResponseMixin, View):
             return redirect('conteudo_modulo_list', self.modulo.id)
         return self.render_to_response({'form':form,
                                         'object':self.obj})
+
+
+class ExcluirConteudoView(View):
+
+    def post(self, request, id_cont):
+        conteudo = get_object_or_404(Conteudo,
+                                     id=id_cont,
+                                     modulo__curso__dono=request.user)
+        modulo = conteudo.modulo
+        conteudo.item.delete()
+        conteudo.delete()
+        return redirect('conteudo_modulo_list', modulo.id)

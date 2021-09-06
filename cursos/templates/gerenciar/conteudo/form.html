@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block titulo %}
+    {% if object %}
+        Editando o conteúdo {{ object.titulo }}
+    {% else %}
+        Adicionando novo conteúdo
+    {% endif %}
+{% endblock %}
+
+{% block conteudo %}
+    <h1>
+        {% if object %}
+            Editar conteúdo {{ object.titulo }}
+        {% else %}
+            Adicionando novo conteúdo ao módulo {{ object.modulo.titulo }}
+        {% endif %}
+    </h1>
+    <div class="module">
+        <h2>Informações do conteúdo</h2>
+        <form action="" method="post" enctype="multipart/form-data">
+            {{ form.as_p }}
+            {% csrf_token %}
+            <p><input type="submit" value="Salvar conteúdo"></p>
+        </form>
+    </div>
+{% endblock %}

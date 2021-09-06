@@ -120,7 +120,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'gerenciar_cursos_list'
 LOGOUT_REDIRECT_URL = 'login'
 
+SECRET_KEY="1"
+
 try:
-    from settings_local import *
+    from .settings_local import SECRET_KEY as sk
+    SECRET_KEY = sk
 except ImportError:
     pass
