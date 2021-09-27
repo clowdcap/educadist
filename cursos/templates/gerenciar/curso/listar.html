@@ -12,6 +12,11 @@
                 <a href="{% url 'editar_curso' c.id %}">Editar</a>
                 <a href="{% url 'excluir_curso' c.id %}">Excluir</a>
                 <a href="{% url 'modulo_curso_update' c.id %}">Editar Módulos</a>
+                {% if c.modulos.count > 0 %}
+                    <a href="{% url 'listar_conteudo_modulo' c.modulos.first.id %}">
+                        Gerenciar conteúdos
+                    </a>
+                {% endif %}
             </p>
         </div>
     {% empty %}

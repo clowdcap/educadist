@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load curso %}
+
+{% block titulo %}
+Modulo {{ modulo.order|add:1 }}: {{ modulo.titulo }}
+{% endblock %}
+
+{% block conteudo %}
+{% with curso=modulo.curso %}
+    <h1>Curso {{ curso.titulo }}</h1>
+    <div class="contents">
+        <h3>Modulos</h3>
+        <ul id="modules">
+        {% for mod in curso.modulos.all %}
+            <li data-id="{{ mod.id }}"
+                {% if mod == modulo %}
+                    class="selected"
+                {% endif %}>
+                <a href="{% url 'listar_conteudo_modulo' mod.id %}">
+                    <span>Modulo
+                        <span class="order">{{ mod.order|add:1 }}</span>
+                    </span>
+                    <br>
+                    {{ mod.titulo }}
+                </a>
+            </li>
+        {% empty %}
+            <li>Não existem módulos cadastrados.</li>
+        {% endfor %}
+        </ul>
+        <p><a href="{% url 'modulo_curso_update' curso.id %}">
+            Editar Módulos
+        </a></p>
+    </div>
+    <div class="module">
+        <h2>Modulo {{ modulo.order|add:1 }}: {{ modulo.titulo }}</h2>
+        <h3>Conteúdos:</h3>
+
+        <div id="module-contents">
+        {% for cont in modulo.conteudos.all %}
+            <div data-id="{{ cont.id }}">
+            {% with item=cont.item %}
+                <p>{{ item }}: {{ item|model_name}} </p>
+                <a href="{% url 'conteudo_modulo_update' modulo.id item|model_name item.id %}">
+                    Editar</a>
+                <br>
+                <form action="{% url 'excluir_conteudo_modulo' cont.id %}" method="post">
+                    <input type="submit" value="Excluir">
+                    {% csrf_token %}
+                </form>
+            {% endwith %}
+            </div>
+        {% empty %}
+            <p>Este módulo ainda não tem conteúdos.</p>
+        {% endfor %}
+        </div>
+        <h3>Adicionar novo conteúdo:</h3>
+        <ul class="content-types">
+            <li><a href="{% url 'criar_conteudo_modulo' modulo.id 'texto'%}">Texto</a></li>
+            <li><a href="{% url 'criar_conteudo_modulo' modulo.id 'imagem'%}">Imagem</a></li>
+            <li><a href="{% url 'criar_conteudo_modulo' modulo.id 'video'%}">Vídeo</a></li>
+            <li><a href="{% url 'criar_conteudo_modulo' modulo.id 'arquivo'%}">Arquivo</a></li>
+        </ul>
+    </div>
+{% endwith %}
+{% endblock %}

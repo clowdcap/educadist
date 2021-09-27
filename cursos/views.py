@@ -100,7 +100,7 @@ class CriarAtualizarConteudoView(TemplateResponseMixin, View):
                                                  'atualizado'])
         return Form(*args,**kwargs)
 
-    def dispatch(self, request, modulo_id, model_name, id=None, *args, **kwargs):
+    def dispatch(self, request, modulo_id, model_name, id=None):
         self.modulo = get_object_or_404(Modulo,
                                       id=modulo_id,
                                       curso__dono=request.user)
@@ -112,9 +112,9 @@ class CriarAtualizarConteudoView(TemplateResponseMixin, View):
         return super().dispatch(request, modulo_id, model_name, id)
 
     def get(self, request, modulo_id, model_name, id=None):
-        form = self.get_form(self.model, instance= self.obj)
+        form = self.get_form(self.model, instance=self.obj)
         return self.render_to_response({'form': form,
-                                        'object':self.obj})
+                                        'object': self.obj})
 
     def post(self, request, modulo_id, model_name, id=None):
         form = self.get_form(self.model,
@@ -128,7 +128,7 @@ class CriarAtualizarConteudoView(TemplateResponseMixin, View):
             if not id:
                 #é um novo conteúdo
                 Conteudo.objects.create(modulo=self.modulo, item=obj)
-            return redirect('conteudo_modulo_list', self.modulo.id)
+            return redirect('listar_conteudo_modulo', self.modulo.id)
         return self.render_to_response({'form':form,
                                         'object':self.obj})
 
@@ -142,4 +142,15 @@ class ExcluirConteudoView(View):
         modulo = conteudo.modulo
         conteudo.item.delete()
         conteudo.delete()
-        return redirect('conteudo_modulo_list', modulo.id)
+        return redirect('listar_conteudo_modulo', modulo.id)
+
+
+class ListarConteudoModuloView(TemplateResponseMixin, View):
+    template_name = 'gerenciar/modulo/listar_conteudo.html'
+
+    def get(self, request, modulo_id):
+        modulo = get_object_or_404(Modulo,
+                                   id=modulo_id,
+                                   curso__dono=request.user)
+        return self.render_to_response({'modulo': modulo})
+

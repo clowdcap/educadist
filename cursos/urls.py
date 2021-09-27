@@ -20,5 +20,10 @@ urlpatterns=[
     path('modulo/<int:modulo_id>/conteudo/<model_name>/<id>/',
          views.CriarAtualizarConteudoView.as_view(),
          name='conteudo_modulo_update'),
-    path('conteudo/excluir/<int:id>/', name='excluir_conteudo_modulo'),
+    path('conteudo/excluir/<int:id_cont>/',
+         views.ExcluirConteudoView.as_view(),
+         name='excluir_conteudo_modulo'),
+    path('modulo/<int:modulo_id>/conteudos',
+         views.ListarConteudoModuloView.as_view(),
+         name='listar_conteudo_modulo'),
 ]
