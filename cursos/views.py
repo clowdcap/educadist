@@ -8,6 +8,7 @@ from django.views.generic.base import TemplateResponseMixin, View
 from .forms import ModuloFormSet
 from django.forms.models import modelform_factory
 from django.apps import apps
+from braces.views import JsonRequestResponseMixin
 
 
 
@@ -153,4 +154,25 @@ class ListarConteudoModuloView(TemplateResponseMixin, View):
                                    id=modulo_id,
                                    curso__dono=request.user)
         return self.render_to_response({'modulo': modulo})
+
+
+class OrdenarModuloView(JsonRequestResponseMixin, View):
+
+    def post(self, request):
+        for id_modulo, order in self.request_json.items():
+            Modulo.objects.filter(id=id_modulo,
+                                  curso__dono=request.user).update(order=order)
+
+        return self.render_json_response({'salvo':'OK'})
+
+
+class OrdenarConteudoView(JsonRequestResponseMixin, View):
+
+    def post(self, request):
+        for id_cont, order in self.request_json.items():
+            Conteudo.objects.filter(id=id_cont,
+                                    modulo__curso__dono=request.user)\
+                                    .update(order=order)
+
+        return self.render_json_response({'salvo':'OK'})
 

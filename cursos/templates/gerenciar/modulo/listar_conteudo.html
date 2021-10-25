@@ -64,3 +64,53 @@ Modulo {{ modulo.order|add:1 }}: {{ modulo.titulo }}
     </div>
 {% endwith %}
 {% endblock %}
+
+{% block domready %}
+
+$('#modules').sortable({
+    stop: function(event, ui){
+        modulos_order={};
+        $('#modules').children().each(function(){
+            //atualiza o campo que contém a ordem
+            $(this).find('.order').text($(this).index() + 1);
+            //liga o id do módulo a sua ordem
+            modulos_order[$(this).data('id')] = $(this).index();
+        });
+
+        let request = $.ajax({
+            type:'POST',
+            url: '{% url "reordenar_modulos" %}',
+            headers: {"X-CSRFToken": "{{ csrf_token }}"},
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            data: JSON.stringify(modulos_order),
+        });
+        request.fail(function(jqXHR, textStatus, msg){
+            alert(msg + "\n" + textStatus);
+        });
+    }
+});
+
+$('#module-contents').sortable({
+    stop: function(event, ui){
+        conteudos_order={};
+        $('#module-contents').children().each(function(){
+            //liga o id do conteúdo à ordem que está na tela
+            conteudos_order[$(this).data('id')] = $(this).index();
+        });
+
+        let request = $.ajax({
+            type:'POST',
+            url: '{% url "reordenar_conteudos" %}',
+            headers: {"X-CSRFToken": "{{ csrf_token }}"},
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            data: JSON.stringify(conteudos_order),
+        });
+        request.fail(function(jqXHR, textStatus, msg){
+            alert(msg + "\n" + textStatus);
+        });
+    }
+});
+
+{% endblock %}

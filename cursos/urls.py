@@ -26,4 +26,10 @@ urlpatterns=[
     path('modulo/<int:modulo_id>/conteudos',
          views.ListarConteudoModuloView.as_view(),
          name='listar_conteudo_modulo'),
+    path('modulos/ordenar/',
+         views.OrdenarModuloView.as_view(),
+         name='reordenar_modulos'),
+    path('conteudos/ordenar/',
+         views.OrdenarConteudoView.as_view(),
+         name='reordenar_conteudos'),
 ]
