@@ -11,7 +11,6 @@ from django.apps import apps
 from braces.views import JsonRequestResponseMixin
 
 
-
 class DonoMixin(object):
     def get_queryset(self):
         q = super().get_queryset()
@@ -156,23 +155,22 @@ class ListarConteudoModuloView(TemplateResponseMixin, View):
         return self.render_to_response({'modulo': modulo})
 
 
-class OrdenarModuloView(JsonRequestResponseMixin, View):
+class ReordenarModulosView(JsonRequestResponseMixin, View):
 
     def post(self, request):
         for id_modulo, order in self.request_json.items():
             Modulo.objects.filter(id=id_modulo,
-                                  curso__dono=request.user).update(order=order)
+                                  curso__dono=request.user)\
+                                  .update(order=order)
+        return self.render_json_response({'salvo': 'OK'})
 
-        return self.render_json_response({'salvo':'OK'})
 
-
-class OrdenarConteudoView(JsonRequestResponseMixin, View):
+class ReordenarConteudosView(JsonRequestResponseMixin, View):
 
     def post(self, request):
         for id_cont, order in self.request_json.items():
             Conteudo.objects.filter(id=id_cont,
                                     modulo__curso__dono=request.user)\
                                     .update(order=order)
-
-        return self.render_json_response({'salvo':'OK'})
+        return self.render_json_response({'salvo': 'OK'})
 

@@ -69,23 +69,22 @@ Modulo {{ modulo.order|add:1 }}: {{ modulo.titulo }}
 
 $('#modules').sortable({
     stop: function(event, ui){
-        modulos_order={};
+        modulos_order = {};
         $('#modules').children().each(function(){
-            //atualiza o campo que contém a ordem
+            //atualiza o campo que contém a ordem na tela
             $(this).find('.order').text($(this).index() + 1);
-            //liga o id do módulo a sua ordem
+            //liga o id do módulo a sua ordem no banco
             modulos_order[$(this).data('id')] = $(this).index();
         });
-
-        let request = $.ajax({
-            type:'POST',
+        let req = $.ajax({
+            type: 'POST',
             url: '{% url "reordenar_modulos" %}',
             headers: {"X-CSRFToken": "{{ csrf_token }}"},
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
-            data: JSON.stringify(modulos_order),
+            data: JSON.stringify(modulos_order)
         });
-        request.fail(function(jqXHR, textStatus, msg){
+        req.fail(function(jqXHR, textStatus, msg){
             alert(msg + "\n" + textStatus);
         });
     }
@@ -93,21 +92,20 @@ $('#modules').sortable({
 
 $('#module-contents').sortable({
     stop: function(event, ui){
-        conteudos_order={};
+        conteudos_order = {};
         $('#module-contents').children().each(function(){
-            //liga o id do conteúdo à ordem que está na tela
+            //liga o id do conteúdo a sua ordem no banco
             conteudos_order[$(this).data('id')] = $(this).index();
         });
-
-        let request = $.ajax({
-            type:'POST',
+        let req = $.ajax({
+            type: 'POST',
             url: '{% url "reordenar_conteudos" %}',
             headers: {"X-CSRFToken": "{{ csrf_token }}"},
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
-            data: JSON.stringify(conteudos_order),
+            data: JSON.stringify(conteudos_order)
         });
-        request.fail(function(jqXHR, textStatus, msg){
+        req.fail(function(jqXHR, textStatus, msg){
             alert(msg + "\n" + textStatus);
         });
     }
