@@ -2,8 +2,8 @@ from django.urls import path
 from . import views
 
 urlpatterns=[
-    path('meuscursos/', views.ListarCursosListView.as_view(),
-         name='gerenciar_cursos_list'),
+    #path('meuscursos/', views.ListarCursosListView.as_view(),
+    #     name='gerenciar_cursos_list'),
     path('', views.ListarCursosListView.as_view(),
          name='gerenciar_cursos_list'),
     path('criarcurso/', views.CriarCursoCreateView.as_view(),
@@ -32,4 +32,10 @@ urlpatterns=[
     path('conteudos/reordenar/',
          views.ReordenarConteudosView.as_view(),
          name='reordenar_conteudos'),
+    path('assunto/<slug:assunto>/',
+         views.ListarCursosView.as_view(),
+         name='listar_cursos_assunto'),
+    path('<slug:slug>/',
+         views.DetalheCursoView.as_view(),
+         name='detalhe_curso'),
 ]

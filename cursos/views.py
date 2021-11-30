@@ -1,5 +1,7 @@
+from django.db.models import Count
+from django.views.generic import DetailView
 from django.views.generic.list import ListView
-from .models import Curso, Modulo, Conteudo
+from .models import Curso, Modulo, Conteudo, Assunto
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -9,6 +11,7 @@ from .forms import ModuloFormSet
 from django.forms.models import modelform_factory
 from django.apps import apps
 from braces.views import JsonRequestResponseMixin
+from alunos.forms import InscricaoCursoForm
 
 
 class DonoMixin(object):
@@ -174,3 +177,33 @@ class ReordenarConteudosView(JsonRequestResponseMixin, View):
                                     .update(order=order)
         return self.render_json_response({'salvo': 'OK'})
 
+
+class ListarCursosView(TemplateResponseMixin, View):
+    model = Curso
+    template_name = 'curso/listar.html'
+
+    def get(self, request, assunto=None):
+        assuntos = Assunto.objects.annotate(
+                           total_cursos=Count('cursos'))
+        cursos = Curso.objects.annotate(
+                           total_modulos=Count('modulos'))
+
+        if assunto:
+            assunto = get_object_or_404(Assunto, slug=assunto)
+            cursos = cursos.filter(assunto=assunto)
+
+        return self.render_to_response({'assuntos': assuntos,
+                                        'assunto': assunto,
+                                        'cursos': cursos})
+
+
+class DetalheCursoView(DetailView):
+    model = Curso
+    template_name = 'curso/detalhar.html'
+    context_object_name = 'curso'
+
+    def get_context_data(self, **kwargs):
+        contexto = super().get_context_data(**kwargs)
+        contexto['inscricao_form'] = InscricaoCursoForm(
+                                        initial={'curso':self.object})
+        return contexto

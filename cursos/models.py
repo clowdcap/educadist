@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
+from django.template.loader import render_to_string
+
 from .fields import OrdenaCampos
 
 
@@ -27,6 +29,9 @@ class Curso(models.Model):
     slug = models.SlugField(max_length=200)
     desc_geral = models.TextField()
     criado = models.DateTimeField(auto_now_add=True)
+    alunos = models.ManyToManyField(User,
+                                    related_name='cursos_aluno',
+                                    blank=True)
 
     class Meta:
         ordering = ['-criado']
@@ -83,6 +88,12 @@ class ItemConteudoBase(models.Model):
 
     def __str__(self):
         return self.titulo
+
+    def renderizar(self):
+        return render_to_string(
+            f'conteudos/{self._meta.model_name}.html',
+            {'item': self}
+        )
 
 
 class Texto(ItemConteudoBase):

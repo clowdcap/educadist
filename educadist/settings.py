@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -33,7 +33,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'embed_video',
+    'channels',
+
     'cursos',
+    'alunos',
+    'chat',
 ]
 
 MIDDLEWARE = [
@@ -51,7 +56,10 @@ ROOT_URLCONF = 'educadist.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ["templates"],
+        'DIRS': ["cursos/templates",
+                 "alunos/templates",
+                 "chat/templates"
+                 ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -65,6 +73,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'educadist.wsgi.application'
+ASGI_APPLICATION = 'educadist.routing.application' # arrumei aqui
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -111,14 +120,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = 'gerenciar_cursos_list'
-LOGOUT_REDIRECT_URL = 'login'
+LOGIN_REDIRECT_URL = 'alunos:listar_cursos_aluno'
+LOGOUT_REDIRECT_URL = 'listar_cursos'
 
 SECRET_KEY="1"
 
@@ -127,3 +139,13 @@ try:
     SECRET_KEY = sk
 except ImportError:
     pass
+
+
+CHANNEL_LAYERS = {
+    'default': {
+         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+         'CONFIG': {
+             'hosts': [('127.0.0.1', 6379)]
+         },
+    },
+}

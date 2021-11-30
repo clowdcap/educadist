@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block titulo %}
+    {{ curso.titulo }}
+{% endblock %}
+
+{% block conteudo %}
+{% with ass=curso.assunto %}
+    <h1>
+        {{ curso.titulo }}
+    </h1>
+    <div class="module">
+        <h2>Detalhe:</h2>
+        <p>
+            <a href="{% url 'listar_cursos_assunto' ass.slug %}">
+                {{ ass.titulo }}
+            </a>.
+            {{ curso.modulos.count }} módulos.
+            Instrutor: {{ curso.dono.get_full_name }}
+        </p>
+        {{ curso.desc_geral|linebreaks }}
+        {% if request.user.is_authenticated %}
+            <form action="{% url 'alunos:inscricao_aluno_curso' %}"
+                  method="post">
+                {{ inscricao_form }}
+                {% csrf_token %}
+                <input type="submit" value="Inscreva-se agora!!!">
+            </form>
+        {% else %}
+            <a href="{% url 'alunos:cadastro_aluno' %}" class="button">
+                Cadastre-se para se inscrever...
+            </a>
+        {% endif %}
+    </div>
+{% endwith %}
+{% endblock %}

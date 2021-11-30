@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block titulo %}
+    Sala Bate Papo do Curso {{ curso.titulo }}
+{% endblock %}
+
+{% block conteudo %}
+    <div id="chat">
+    </div>
+    <div id="chat-input">
+        <input id="mensagem-chat" type="text">
+        <input type="submit" id="enviar-mensagem" value="Enviar">
+    </div>
+{% endblock %}
+
+{% block domready %}
+    let idCurso = {{ curso.id }};
+    let url = 'ws://' + window.location.host +
+              '/ws/sala/' + idCurso + '/';
+    let chatSocket = new WebSocket(url);
+
+    chatSocket.addEventListener('erro', function(event){
+        console.log('Erro: ', event);
+    });
+
+    chatSocket.onmessage = function(e){
+        let dados = JSON.parse(e.data);
+        let mensagem = dados['message']; //alterei aqui
+
+        let $chat = $('#chat');
+        $chat.append('<div class="message">' + mensagem +
+                     '</div>');
+        $chat.scrollTop($chat[0].scrollHeight);
+    };
+
+    chatSocket.onclose = function(e){
+        console.error('Chat fechado inesperadamente');
+    };
+
+    // Enviando dados para o Socket
+    let entrada = $('#mensagem-chat');
+    let btenvio = $('#enviar-mensagem');
+
+    entrada.focus();
+
+    btenvio.click(function(){
+        let mensagem = entrada.val();
+        if(mensagem){
+            //enviar a mensagem no formato JSON
+            chatSocket.send(JSON.stringify({'message': mensagem}));
+
+            //limpa a caixa de texto
+            entrada.val("");
+            //coloca o foco novamente na caixa de texto
+            entrada.focus();
+        }
+    });
+
+    entrada.keyup(function(e){
+        if(e.which === 13){
+            btenvio.click();
+        }
+    });
+
+{% endblock %}
